@@ -98,7 +98,7 @@
       background: #2a2200;
     }
 
-    .shop-item img {
+    .shop-item .item-icon {
       width: 32px;
       height: 32px;
       image-rendering: pixelated;
@@ -120,18 +120,29 @@
 
     .item-desc {
       font-size: 6px;
-      color: #f5c51866;
+      color: #f5c51666;
     }
 
     .item-price {
+      display: flex;
+      align-items: center;
+      gap: 4px;
       font-size: 8px;
       color: #f5c51888;
       white-space: nowrap;
       flex-shrink: 0;
     }
 
+    .item-price img {
+      width: 14px;
+      height: 14px;
+      image-rendering: pixelated;
+      object-fit: contain;
+    }
+
     .item-price.cant-afford {
       color: #884400aa;
+      opacity: 0.5;
     }
 
     .shop-item.purchased .item-price {
@@ -173,19 +184,29 @@
       pointer-events: none;
     }
 
-    /* ───── UPGRADES DISPLAY (bottom-left of right panel) ───── */
-    #upgrades-display {
+    /* ───── UPGRADES ───── */
+    /* Altın Havuç — sol alt köşe */
+    #upgrade-carrot {
       position: absolute;
       bottom: 16px;
       left: 16px;
-      display: flex;
-      gap: 8px;
+      display: none;
+      pointer-events: none;
+    }
+
+    /* Altın Ekmek — patatese göre sol */
+    #upgrade-bread {
+      position: absolute;
+      left: calc(50% - 180px);
+      top: 50%;
+      transform: translateY(-50%);
+      display: none;
       pointer-events: none;
     }
 
     .upgrade-icon {
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       image-rendering: pixelated;
       object-fit: contain;
       filter: drop-shadow(0 0 6px #f5c51888);
@@ -230,20 +251,45 @@
   <div id="shop-title">SHOP</div>
   <div id="shop-items">
 
-    <!-- Item 1: Altın Havuç -->
+    <!-- Altın Havuç -->
     <div class="shop-item" id="item-golden-carrot" onclick="buyItem('golden-carrot')">
-      <img src="Golden_Carrot_JE4_BE2.png" alt="Altın Havuç" />
+      <img class="item-icon" src="Golden_Carrot_JE4_BE2.png" alt="Altın Havuç" />
       <div class="shop-item-info">
         <span class="item-name">Altın Havuç</span>
-        <span class="item-desc">Tıklama başına +2</span>
+        <span class="item-desc">Tıklama +1 (sol alt)</span>
       </div>
-      <span class="item-price" id="price-golden-carrot">500 🥔</span>
+      <span class="item-price" id="price-golden-carrot">
+        500 <img src="potato.png" alt="patates" />
+      </span>
     </div>
 
-    <div class="shop-item"><img style="opacity:0.2;filter:grayscale(1)" src="potato.png" alt="" /><div class="shop-item-info"><span class="item-name">-</span><span class="item-desc">Yakında</span></div><span class="item-price">Fiyat: -</span></div>
-    <div class="shop-item"><img style="opacity:0.2;filter:grayscale(1)" src="potato.png" alt="" /><div class="shop-item-info"><span class="item-name">-</span><span class="item-desc">Yakında</span></div><span class="item-price">Fiyat: -</span></div>
-    <div class="shop-item"><img style="opacity:0.2;filter:grayscale(1)" src="potato.png" alt="" /><div class="shop-item-info"><span class="item-name">-</span><span class="item-desc">Yakında</span></div><span class="item-price">Fiyat: -</span></div>
-    <div class="shop-item"><img style="opacity:0.2;filter:grayscale(1)" src="potato.png" alt="" /><div class="shop-item-info"><span class="item-name">-</span><span class="item-desc">Yakında</span></div><span class="item-price">Fiyat: -</span></div>
+    <!-- Altın Ekmek -->
+    <div class="shop-item" id="item-golden-bread" onclick="buyItem('golden-bread')">
+      <img class="item-icon" src="golden_bread.png" alt="Altın Ekmek" />
+      <div class="shop-item-info">
+        <span class="item-name">Altın Ekmek</span>
+        <span class="item-desc">Tıklama +1 (sol yan)</span>
+      </div>
+      <span class="item-price" id="price-golden-bread">
+        500 <img src="potato.png" alt="patates" />
+      </span>
+    </div>
+
+    <div class="shop-item" style="cursor:default">
+      <img class="item-icon" src="potato.png" alt="" style="opacity:0.2;filter:grayscale(1)" />
+      <div class="shop-item-info"><span class="item-name">-</span><span class="item-desc">Yakında</span></div>
+      <span class="item-price">Fiyat: -</span>
+    </div>
+    <div class="shop-item" style="cursor:default">
+      <img class="item-icon" src="potato.png" alt="" style="opacity:0.2;filter:grayscale(1)" />
+      <div class="shop-item-info"><span class="item-name">-</span><span class="item-desc">Yakında</span></div>
+      <span class="item-price">Fiyat: -</span>
+    </div>
+    <div class="shop-item" style="cursor:default">
+      <img class="item-icon" src="potato.png" alt="" style="opacity:0.2;filter:grayscale(1)" />
+      <div class="shop-item-info"><span class="item-name">-</span><span class="item-desc">Yakında</span></div>
+      <span class="item-price">Fiyat: -</span>
+    </div>
 
   </div>
 </div>
@@ -251,38 +297,56 @@
 <!-- RIGHT -->
 <div id="right-panel">
   <img id="potato-img" src="potato.png" alt="potato" draggable="false" />
-  <div id="upgrades-display"></div>
+
+  <!-- Altın Havuç: sol alt -->
+  <div id="upgrade-carrot">
+    <img class="upgrade-icon" src="Golden_Carrot_JE4_BE2.png" alt="Altın Havuç" />
+  </div>
+
+  <!-- Altın Ekmek: patatese göre sol -->
+  <div id="upgrade-bread">
+    <img class="upgrade-icon" src="golden_bread.png" alt="Altın Ekmek" />
+  </div>
 </div>
 
 <script>
-  let count       = 0;
-  let clickValue  = 1;
-  const countEl   = document.getElementById('currency-count');
-  const panel     = document.getElementById('right-panel');
-  const upgradesEl = document.getElementById('upgrades-display');
+  let count      = 0;
+  let hasCarrot  = false;
+  let hasBread   = false;
+  const countEl  = document.getElementById('currency-count');
+  const panel    = document.getElementById('right-panel');
+
+  function getClickValue() {
+    // tek başına: +2, ikisi beraber: +3, hiçbiri: +1
+    if (hasCarrot && hasBread) return 3;
+    if (hasCarrot || hasBread) return 2;
+    return 1;
+  }
+
+  panel.addEventListener('click', (e) => {
+    const val = getClickValue();
+    count += val;
+    countEl.textContent = count;
+    spawnFloat(e, val);
+    updateShopPrices();
+  });
 
   const ITEMS = {
     'golden-carrot': {
       price: 500,
-      bought: false,
-      icon: 'Golden_Carrot_JE4_BE2.png',
       onBuy() {
-        clickValue = 2;
-        const img = document.createElement('img');
-        img.src = 'Golden_Carrot_JE4_BE2.png';
-        img.className = 'upgrade-icon';
-        img.title = 'Altın Havuç — x2 tıklama';
-        upgradesEl.appendChild(img);
+        hasCarrot = true;
+        document.getElementById('upgrade-carrot').style.display = 'block';
+      }
+    },
+    'golden-bread': {
+      price: 500,
+      onBuy() {
+        hasBread = true;
+        document.getElementById('upgrade-bread').style.display = 'block';
       }
     }
   };
-
-  panel.addEventListener('click', (e) => {
-    count += clickValue;
-    countEl.textContent = count;
-    spawnFloat(e);
-    updateShopPrices();
-  });
 
   function buyItem(id) {
     const item = ITEMS[id];
@@ -297,7 +361,10 @@
     const el = document.getElementById('item-' + id);
     el.classList.add('purchased');
     el.onclick = null;
-    document.getElementById('price-' + id).textContent = '✔ Alındı';
+
+    const priceEl = document.getElementById('price-' + id);
+    priceEl.innerHTML = '✔ Alındı';
+
     updateShopPrices();
   }
 
@@ -310,17 +377,16 @@
     }
   }
 
-  function spawnFloat(e) {
+  function spawnFloat(e, val) {
     const rect  = panel.getBoundingClientRect();
     const label = document.createElement('div');
     label.className = 'float-label';
 
     const miniImg = document.createElement('img');
     miniImg.src = 'potato.png';
-    miniImg.alt = '+' + clickValue;
 
     const txt = document.createElement('span');
-    txt.textContent = '+' + clickValue;
+    txt.textContent = '+' + val;
 
     label.appendChild(miniImg);
     label.appendChild(txt);
