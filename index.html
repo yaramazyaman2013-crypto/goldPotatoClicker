@@ -41,6 +41,7 @@
       width: 36px;
       height: 36px;
       image-rendering: pixelated;
+      object-fit: contain;
     }
 
     #currency-count {
@@ -146,10 +147,11 @@
       white-space: nowrap;
     }
 
-    .float-label canvas {
+    .float-label img {
       width: 18px;
       height: 18px;
       image-rendering: pixelated;
+      object-fit: contain;
     }
 
     @keyframes floatUp {
@@ -164,7 +166,7 @@
 <!-- LEFT -->
 <div id="left-panel">
   <div id="currency-bar">
-    <canvas id="currency-icon" width="16" height="16"></canvas>
+    <img id="currency-icon" src="potato.png" alt="potato" />
     <span id="currency-count">0</span>
   </div>
   <div id="shop-title">SHOP</div>
@@ -179,57 +181,10 @@
 
 <!-- RIGHT -->
 <div id="right-panel">
-  <canvas id="potato-img" width="16" height="16"></canvas>
+  <img id="potato-img" src="potato.png" alt="potato" draggable="false" />
 </div>
 
 <script>
-  // ── Pixel art: 16×16 gold potato ──────────────────────────────────────────
-  // colour palette
-  const _ = null;          // transparent
-  const A = '#6b4000';     // dark outline / shadow
-  const B = '#a06010';     // mid shadow
-  const C = '#d4900a';     // base gold
-  const D = '#f5c518';     // bright gold
-  const E = '#ffe566';     // highlight
-  const F = '#fff9a0';     // bright highlight
-  const G = '#8b5500';     // brown spot
-
-  const MAP = [
-    [_,_,_,A,A,A,A,A,A,A,_,_,_,_,_,_],
-    [_,_,A,C,C,D,D,D,D,C,A,_,_,_,_,_],
-    [_,A,C,D,D,E,E,F,E,D,D,A,_,_,_,_],
-    [A,C,D,E,F,F,E,D,D,D,D,C,A,_,_,_],
-    [A,C,D,E,F,E,D,C,C,D,D,C,A,_,_,_],
-    [A,B,D,D,D,D,C,G,G,C,D,D,B,A,_,_],
-    [A,B,C,D,D,C,G,A,A,G,C,D,D,B,A,_],
-    [_,A,C,D,C,C,A,_,_,A,C,C,D,C,A,_],
-    [_,A,B,C,D,C,G,A,A,G,C,D,C,B,A,_],
-    [_,_,A,C,C,D,A,G,G,A,D,C,C,A,_,_],
-    [_,_,A,B,C,D,D,C,C,D,D,C,B,A,_,_],
-    [_,_,_,A,C,D,D,E,E,D,D,C,A,_,_,_],
-    [_,_,_,A,B,C,D,D,D,D,C,B,A,_,_,_],
-    [_,_,_,_,A,B,C,C,C,C,B,A,_,_,_,_],
-    [_,_,_,_,_,A,A,B,B,A,A,_,_,_,_,_],
-    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
-  ];
-
-  function drawPotato(canvas) {
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, 16, 16);
-    MAP.forEach((row, y) => {
-      row.forEach((col, x) => {
-        if (col) {
-          ctx.fillStyle = col;
-          ctx.fillRect(x, y, 1, 1);
-        }
-      });
-    });
-  }
-
-  // draw on main canvases
-  drawPotato(document.getElementById('potato-img'));
-  drawPotato(document.getElementById('currency-icon'));
-
   // ── Clicker logic ──────────────────────────────────────────────────────────
   let count = 0;
   const countEl = document.getElementById('currency-count');
@@ -246,15 +201,14 @@
     const label = document.createElement('div');
     label.className = 'float-label';
 
-    // tiny potato canvas
-    const miniCv = document.createElement('canvas');
-    miniCv.width = 16; miniCv.height = 16;
-    drawPotato(miniCv);
+    const miniImg = document.createElement('img');
+    miniImg.src = 'potato.png';
+    miniImg.alt = '+1';
 
     const txt = document.createElement('span');
     txt.textContent = '+1';
 
-    label.appendChild(miniCv);
+    label.appendChild(miniImg);
     label.appendChild(txt);
 
     // randomise drift, rise, duration
