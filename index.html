@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gold Potato Clicker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0a00;
+      color: #f5c518;
+      font-family: 'Press Start 2P', monospace;
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ───── LEFT PANEL ───── */
+    #left-panel {
+      width: 320px;
+      min-width: 260px;
+      background: #111100;
+      border-right: 3px solid #f5c518;
+      display: flex;
+      flex-direction: column;
+      padding: 18px 14px;
+      gap: 16px;
+    }
+
+    #currency-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #currency-icon {
+      width: 36px;
+      height: 36px;
+      image-rendering: pixelated;
+    }
+
+    #currency-count {
+      font-size: 22px;
+      color: #f5c518;
+      text-shadow: 0 0 8px #f5c51888;
+    }
+
+    #shop-title {
+      font-size: 13px;
+      color: #f5c518;
+      letter-spacing: 3px;
+      border-bottom: 2px solid #f5c51855;
+      padding-bottom: 8px;
+    }
+
+    #shop-items {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    /* custom scrollbar */
+    #shop-items::-webkit-scrollbar { width: 4px; }
+    #shop-items::-webkit-scrollbar-track { background: #111100; }
+    #shop-items::-webkit-scrollbar-thumb { background: #f5c51855; border-radius: 2px; }
+
+    .shop-item {
+      background: #1a1800;
+      border: 2px solid #f5c51833;
+      border-radius: 4px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .shop-item:hover {
+      border-color: #f5c518aa;
+      background: #221f00;
+    }
+
+    .item-name {
+      font-size: 9px;
+      color: #f5c518cc;
+    }
+
+    .item-price {
+      font-size: 9px;
+      color: #f5c51877;
+    }
+
+    /* ───── RIGHT PANEL ───── */
+    #right-panel {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: radial-gradient(ellipse at center, #1a1500 0%, #0a0a00 70%);
+      user-select: none;
+    }
+
+    #potato-img {
+      width: 220px;
+      height: 220px;
+      image-rendering: pixelated;
+      transition: transform 0.08s;
+      filter: drop-shadow(0 0 28px #f5c51866);
+    }
+
+    #right-panel:active #potato-img {
+      transform: scale(0.91);
+    }
+
+    /* soft glow ring behind potato */
+    #right-panel::before {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #f5c51814 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ───── FLOAT LABELS ───── */
+    .float-label {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: #f5c518;
+      text-shadow: 0 0 6px #f5c518bb;
+      pointer-events: none;
+      animation: floatUp var(--dur, 1.1s) ease-out forwards;
+      white-space: nowrap;
+    }
+
+    .float-label canvas {
+      width: 18px;
+      height: 18px;
+      image-rendering: pixelated;
+    }
+
+    @keyframes floatUp {
+      0%   { opacity: 1; transform: translateY(0) translateX(var(--dx, 0px)) scale(1); }
+      15%  { transform: translateY(calc(var(--rise, -110px) * 0.1)) translateX(calc(var(--dx, 0px) * 0.3)) scale(1.15); }
+      100% { opacity: 0; transform: translateY(var(--rise, -110px)) translateX(var(--dx, 0px)) scale(0.8); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LEFT -->
+<div id="left-panel">
+  <div id="currency-bar">
+    <canvas id="currency-icon" width="16" height="16"></canvas>
+    <span id="currency-count">0</span>
+  </div>
+  <div id="shop-title">SHOP</div>
+  <div id="shop-items">
+    <div class="shop-item"><span class="item-name">-</span><span class="item-price">Fiyat: -</span></div>
+    <div class="shop-item"><span class="item-name">-</span><span class="item-price">Fiyat: -</span></div>
+    <div class="shop-item"><span class="item-name">-</span><span class="item-price">Fiyat: -</span></div>
+    <div class="shop-item"><span class="item-name">-</span><span class="item-price">Fiyat: -</span></div>
+    <div class="shop-item"><span class="item-name">-</span><span class="item-price">Fiyat: -</span></div>
+  </div>
+</div>
+
+<!-- RIGHT -->
+<div id="right-panel">
+  <canvas id="potato-img" width="16" height="16"></canvas>
+</div>
+
+<script>
+  // ── Pixel art: 16×16 gold potato ──────────────────────────────────────────
+  // colour palette
+  const _ = null;          // transparent
+  const A = '#6b4000';     // dark outline / shadow
+  const B = '#a06010';     // mid shadow
+  const C = '#d4900a';     // base gold
+  const D = '#f5c518';     // bright gold
+  const E = '#ffe566';     // highlight
+  const F = '#fff9a0';     // bright highlight
+  const G = '#8b5500';     // brown spot
+
+  const MAP = [
+    [_,_,_,A,A,A,A,A,A,A,_,_,_,_,_,_],
+    [_,_,A,C,C,D,D,D,D,C,A,_,_,_,_,_],
+    [_,A,C,D,D,E,E,F,E,D,D,A,_,_,_,_],
+    [A,C,D,E,F,F,E,D,D,D,D,C,A,_,_,_],
+    [A,C,D,E,F,E,D,C,C,D,D,C,A,_,_,_],
+    [A,B,D,D,D,D,C,G,G,C,D,D,B,A,_,_],
+    [A,B,C,D,D,C,G,A,A,G,C,D,D,B,A,_],
+    [_,A,C,D,C,C,A,_,_,A,C,C,D,C,A,_],
+    [_,A,B,C,D,C,G,A,A,G,C,D,C,B,A,_],
+    [_,_,A,C,C,D,A,G,G,A,D,C,C,A,_,_],
+    [_,_,A,B,C,D,D,C,C,D,D,C,B,A,_,_],
+    [_,_,_,A,C,D,D,E,E,D,D,C,A,_,_,_],
+    [_,_,_,A,B,C,D,D,D,D,C,B,A,_,_,_],
+    [_,_,_,_,A,B,C,C,C,C,B,A,_,_,_,_],
+    [_,_,_,_,_,A,A,B,B,A,A,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  ];
+
+  function drawPotato(canvas) {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 16, 16);
+    MAP.forEach((row, y) => {
+      row.forEach((col, x) => {
+        if (col) {
+          ctx.fillStyle = col;
+          ctx.fillRect(x, y, 1, 1);
+        }
+      });
+    });
+  }
+
+  // draw on main canvases
+  drawPotato(document.getElementById('potato-img'));
+  drawPotato(document.getElementById('currency-icon'));
+
+  // ── Clicker logic ──────────────────────────────────────────────────────────
+  let count = 0;
+  const countEl = document.getElementById('currency-count');
+  const panel   = document.getElementById('right-panel');
+
+  panel.addEventListener('click', (e) => {
+    count++;
+    countEl.textContent = count;
+    spawnFloat(e);
+  });
+
+  function spawnFloat(e) {
+    const rect  = panel.getBoundingClientRect();
+    const label = document.createElement('div');
+    label.className = 'float-label';
+
+    // tiny potato canvas
+    const miniCv = document.createElement('canvas');
+    miniCv.width = 16; miniCv.height = 16;
+    drawPotato(miniCv);
+
+    const txt = document.createElement('span');
+    txt.textContent = '+1';
+
+    label.appendChild(miniCv);
+    label.appendChild(txt);
+
+    // randomise drift, rise, duration
+    const dx   = (Math.random() * 80 - 40).toFixed(0) + 'px';
+    const rise = -(Math.random() * 100 + 80).toFixed(0) + 'px';
+    const dur  = (Math.random() * 0.55 + 0.85).toFixed(2) + 's';
+
+    label.style.setProperty('--dx',   dx);
+    label.style.setProperty('--rise', rise);
+    label.style.setProperty('--dur',  dur);
+
+    // position near click, kept inside panel
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    label.style.left   = Math.min(Math.max(x - 20, 8), rect.width  - 80) + 'px';
+    label.style.bottom = Math.max(rect.height - y, 8) + 'px';
+
+    panel.appendChild(label);
+    label.addEventListener('animationend', () => label.remove());
+  }
+</script>
+</body>
+</html>
