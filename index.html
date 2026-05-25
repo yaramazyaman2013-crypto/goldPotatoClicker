@@ -188,7 +188,7 @@
     /* Altın Havuç — patatese göre sağ */
     #upgrade-carrot {
       position: absolute;
-      right: calc(50% - 180px);
+      right: calc(50% - 230px);
       top: 50%;
       transform: translateY(-50%);
       display: none;
@@ -198,19 +198,29 @@
     /* Altın Ekmek — patatese göre sol */
     #upgrade-bread {
       position: absolute;
-      left: calc(50% - 180px);
+      left: calc(50% - 230px);
       top: 50%;
       transform: translateY(-50%);
       display: none;
       pointer-events: none;
     }
 
+    /* Altın Yumurta — üstte ortada */
+    #upgrade-egg {
+      position: absolute;
+      top: calc(50% - 230px);
+      left: 50%;
+      transform: translateX(-50%);
+      display: none;
+      pointer-events: none;
+    }
+
     .upgrade-icon {
-      width: 44px;
-      height: 44px;
+      width: 220px;
+      height: 220px;
       image-rendering: pixelated;
       object-fit: contain;
-      filter: drop-shadow(0 0 6px #f5c51888);
+      filter: drop-shadow(0 0 14px #f5c51866);
     }
 
     /* ───── FLOAT LABELS ───── */
@@ -257,7 +267,7 @@
       <img class="item-icon" src="Golden_Carrot_JE4_BE2.png" alt="Altın Havuç" />
       <div class="shop-item-info">
         <span class="item-name">Altın Havuç</span>
-        <span class="item-desc">Tıklama +1 (sol alt)</span>
+        <span class="item-desc">Tıklama +1 (sağda)</span>
       </div>
       <span class="item-price" id="price-golden-carrot">
         500 <img src="potato.png" alt="patates" />
@@ -276,11 +286,18 @@
       </span>
     </div>
 
-    <div class="shop-item" style="cursor:default">
-      <img class="item-icon" src="potato.png" alt="" style="opacity:0.2;filter:grayscale(1)" />
-      <div class="shop-item-info"><span class="item-name">-</span><span class="item-desc">Yakında</span></div>
-      <span class="item-price">Fiyat: -</span>
+    <!-- Altın Yumurta -->
+    <div class="shop-item" id="item-golden-egg" onclick="buyItem('golden-egg')">
+      <img class="item-icon" src="golden_egg.png" alt="Altın Yumurta" />
+      <div class="shop-item-info">
+        <span class="item-name">Altın Yumurta</span>
+        <span class="item-desc">Tıklamayı 2x katlar</span>
+      </div>
+      <span class="item-price" id="price-golden-egg">
+        5000 <img src="potato.png" alt="patates" />
+      </span>
     </div>
+
     <div class="shop-item" style="cursor:default">
       <img class="item-icon" src="potato.png" alt="" style="opacity:0.2;filter:grayscale(1)" />
       <div class="shop-item-info"><span class="item-name">-</span><span class="item-desc">Yakında</span></div>
@@ -308,20 +325,27 @@
   <div id="upgrade-bread">
     <img class="upgrade-icon" src="golden_bread.png" alt="Altın Ekmek" />
   </div>
+
+  <!-- Altın Yumurta: üstte orta -->
+  <div id="upgrade-egg">
+    <img class="upgrade-icon" src="golden_egg.png" alt="Altın Yumurta" />
+  </div>
 </div>
 
 <script>
   let count      = 0;
   let hasCarrot  = false;
   let hasBread   = false;
+  let hasEgg     = false;
   const countEl  = document.getElementById('currency-count');
   const panel    = document.getElementById('right-panel');
 
   function getClickValue() {
-    // tek başına: +2, ikisi beraber: +3, hiçbiri: +1
-    if (hasCarrot && hasBread) return 3;
-    if (hasCarrot || hasBread) return 2;
-    return 1;
+    let val = 1;
+    if (hasCarrot) val += 1;
+    if (hasBread)  val += 1;
+    if (hasEgg)    val *= 2;
+    return val;
   }
 
   panel.addEventListener('click', (e) => {
@@ -345,6 +369,13 @@
       onBuy() {
         hasBread = true;
         document.getElementById('upgrade-bread').style.display = 'block';
+      }
+    },
+    'golden-egg': {
+      price: 5000,
+      onBuy() {
+        hasEgg = true;
+        document.getElementById('upgrade-egg').style.display = 'block';
       }
     }
   };
