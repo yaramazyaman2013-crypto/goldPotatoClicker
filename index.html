@@ -66,7 +66,6 @@
       flex: 1;
     }
 
-    /* custom scrollbar */
     #shop-items::-webkit-scrollbar { width: 4px; }
     #shop-items::-webkit-scrollbar-track { background: #111100; }
     #shop-items::-webkit-scrollbar-thumb { background: #f5c51855; border-radius: 2px; }
@@ -75,10 +74,11 @@
       background: #1a1800;
       border: 2px solid #f5c51833;
       border-radius: 4px;
-      padding: 12px 14px;
+      padding: 10px 12px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      gap: 10px;
+      cursor: pointer;
       transition: border-color 0.15s, background 0.15s;
     }
 
@@ -87,14 +87,55 @@
       background: #221f00;
     }
 
+    .shop-item.purchased {
+      border-color: #f5c518;
+      background: #2a2200;
+      cursor: default;
+    }
+
+    .shop-item.purchased:hover {
+      border-color: #f5c518;
+      background: #2a2200;
+    }
+
+    .shop-item img {
+      width: 32px;
+      height: 32px;
+      image-rendering: pixelated;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .shop-item-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
     .item-name {
-      font-size: 9px;
+      font-size: 8px;
       color: #f5c518cc;
     }
 
+    .item-desc {
+      font-size: 6px;
+      color: #f5c51866;
+    }
+
     .item-price {
-      font-size: 9px;
-      color: #f5c51877;
+      font-size: 8px;
+      color: #f5c51888;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .item-price.cant-afford {
+      color: #884400aa;
+    }
+
+    .shop-item.purchased .item-price {
+      color: #f5c518;
     }
 
     /* ───── RIGHT PANEL ───── */
@@ -122,7 +163,6 @@
       transform: scale(0.91);
     }
 
-    /* soft glow ring behind potato */
     #right-panel::before {
       content: '';
       position: absolute;
@@ -131,6 +171,24 @@
       border-radius: 50%;
       background: radial-gradient(circle, #f5c51814 0%, transparent 70%);
       pointer-events: none;
+    }
+
+    /* ───── UPGRADES DISPLAY (bottom-left of right panel) ───── */
+    #upgrades-display {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      display: flex;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .upgrade-icon {
+      width: 40px;
+      height: 40px;
+      image-rendering: pixelated;
+      object-fit: contain;
+      filter: drop-shadow(0 0 6px #f5c51888);
     }
 
     /* ───── FLOAT LABELS ───── */
@@ -171,30 +229,86 @@
   </div>
   <div id="shop-title">SHOP</div>
   <div id="shop-items">
-    <div class="shop-item"><span class="item-name">-</span><span class="item-price">Fiyat: -</span></div>
-    <div class="shop-item"><span class="item-name">-</span><span class="item-price">Fiyat: -</span></div>
-    <div class="shop-item"><span class="item-name">-</span><span class="item-price">Fiyat: -</span></div>
-    <div class="shop-item"><span class="item-name">-</span><span class="item-price">Fiyat: -</span></div>
-    <div class="shop-item"><span class="item-name">-</span><span class="item-price">Fiyat: -</span></div>
+
+    <!-- Item 1: Altın Havuç -->
+    <div class="shop-item" id="item-golden-carrot" onclick="buyItem('golden-carrot')">
+      <img src="Golden_Carrot_JE4_BE2.png" alt="Altın Havuç" />
+      <div class="shop-item-info">
+        <span class="item-name">Altın Havuç</span>
+        <span class="item-desc">Tıklama başına +2</span>
+      </div>
+      <span class="item-price" id="price-golden-carrot">500 🥔</span>
+    </div>
+
+    <div class="shop-item"><img style="opacity:0.2;filter:grayscale(1)" src="potato.png" alt="" /><div class="shop-item-info"><span class="item-name">-</span><span class="item-desc">Yakında</span></div><span class="item-price">Fiyat: -</span></div>
+    <div class="shop-item"><img style="opacity:0.2;filter:grayscale(1)" src="potato.png" alt="" /><div class="shop-item-info"><span class="item-name">-</span><span class="item-desc">Yakında</span></div><span class="item-price">Fiyat: -</span></div>
+    <div class="shop-item"><img style="opacity:0.2;filter:grayscale(1)" src="potato.png" alt="" /><div class="shop-item-info"><span class="item-name">-</span><span class="item-desc">Yakında</span></div><span class="item-price">Fiyat: -</span></div>
+    <div class="shop-item"><img style="opacity:0.2;filter:grayscale(1)" src="potato.png" alt="" /><div class="shop-item-info"><span class="item-name">-</span><span class="item-desc">Yakında</span></div><span class="item-price">Fiyat: -</span></div>
+
   </div>
 </div>
 
 <!-- RIGHT -->
 <div id="right-panel">
   <img id="potato-img" src="potato.png" alt="potato" draggable="false" />
+  <div id="upgrades-display"></div>
 </div>
 
 <script>
-  // ── Clicker logic ──────────────────────────────────────────────────────────
-  let count = 0;
-  const countEl = document.getElementById('currency-count');
-  const panel   = document.getElementById('right-panel');
+  let count       = 0;
+  let clickValue  = 1;
+  const countEl   = document.getElementById('currency-count');
+  const panel     = document.getElementById('right-panel');
+  const upgradesEl = document.getElementById('upgrades-display');
+
+  const ITEMS = {
+    'golden-carrot': {
+      price: 500,
+      bought: false,
+      icon: 'Golden_Carrot_JE4_BE2.png',
+      onBuy() {
+        clickValue = 2;
+        const img = document.createElement('img');
+        img.src = 'Golden_Carrot_JE4_BE2.png';
+        img.className = 'upgrade-icon';
+        img.title = 'Altın Havuç — x2 tıklama';
+        upgradesEl.appendChild(img);
+      }
+    }
+  };
 
   panel.addEventListener('click', (e) => {
-    count++;
+    count += clickValue;
     countEl.textContent = count;
     spawnFloat(e);
+    updateShopPrices();
   });
+
+  function buyItem(id) {
+    const item = ITEMS[id];
+    if (!item || item.bought) return;
+    if (count < item.price) return;
+
+    count -= item.price;
+    item.bought = true;
+    countEl.textContent = count;
+    item.onBuy();
+
+    const el = document.getElementById('item-' + id);
+    el.classList.add('purchased');
+    el.onclick = null;
+    document.getElementById('price-' + id).textContent = '✔ Alındı';
+    updateShopPrices();
+  }
+
+  function updateShopPrices() {
+    for (const [id, item] of Object.entries(ITEMS)) {
+      if (item.bought) continue;
+      const priceEl = document.getElementById('price-' + id);
+      if (!priceEl) continue;
+      priceEl.classList.toggle('cant-afford', count < item.price);
+    }
+  }
 
   function spawnFloat(e) {
     const rect  = panel.getBoundingClientRect();
@@ -203,15 +317,14 @@
 
     const miniImg = document.createElement('img');
     miniImg.src = 'potato.png';
-    miniImg.alt = '+1';
+    miniImg.alt = '+' + clickValue;
 
     const txt = document.createElement('span');
-    txt.textContent = '+1';
+    txt.textContent = '+' + clickValue;
 
     label.appendChild(miniImg);
     label.appendChild(txt);
 
-    // randomise drift, rise, duration
     const dx   = (Math.random() * 80 - 40).toFixed(0) + 'px';
     const rise = -(Math.random() * 100 + 80).toFixed(0) + 'px';
     const dur  = (Math.random() * 0.55 + 0.85).toFixed(2) + 's';
@@ -220,7 +333,6 @@
     label.style.setProperty('--rise', rise);
     label.style.setProperty('--dur',  dur);
 
-    // position near click, kept inside panel
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     label.style.left   = Math.min(Math.max(x - 20, 8), rect.width  - 80) + 'px';
