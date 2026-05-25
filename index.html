@@ -144,6 +144,7 @@
       filter: drop-shadow(0 0 8px #f5c51844);
       display: none; bottom: 16px;
       pointer-events: none;
+      transition: transform 0.12s;
     }
     #animal-chicken { left: 16px; }
     #animal-pig     { right: 16px; }
@@ -231,7 +232,7 @@
       <img class="item-icon" src="pig.png" alt="Domuz" />
       <div class="shop-item-info">
         <span class="item-name">Domuz</span>
-        <span class="item-desc">5dk'da -500 patates</span>
+        <span class="item-desc">3sn'de 1 otomatik tık, 5dk'da -500</span>
       </div>
       <span class="item-price" id="price-pig">7000 <img src="potato.png" alt="" /></span>
     </div>
@@ -310,6 +311,17 @@
       onBuy() {
         hasPig = true;
         document.getElementById('animal-pig').style.display = 'block';
+        // auto-click every 3 seconds
+        setInterval(() => {
+          const val = getClickValue();
+          count += val;
+          countEl.textContent = count;
+          updateShopPrices();
+          // animate pig icon
+          const pigEl = document.getElementById('animal-pig');
+          pigEl.style.transform = 'scale(0.85)';
+          setTimeout(() => pigEl.style.transform = '', 120);
+        }, 3000);
       }
     }
   };
@@ -348,8 +360,10 @@
     countEl.textContent = count;
     updateShopPrices();
 
-    const sign = delta > 0 ? '+' : '';
-    showNotif(`Pasif gelir: ${sign}${delta} 🥔`);
+    const parts = [];
+    if (hasChicken) parts.push('Tavuk: +1000');
+    if (hasPig)     parts.push('Domuz: -500');
+    showNotif(parts.join('  |  '));
   }, 5 * 60 * 1000);
 
   function showNotif(msg) {
