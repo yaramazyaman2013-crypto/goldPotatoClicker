@@ -118,13 +118,13 @@
     #upgrade-bread  { right: calc(50% + 160px); }
     #upgrade-carrot { left:  calc(50% + 160px); }
 
-    /* egg — bottom center */
+    /* egg — bottom center, same size as potato */
     #upgrade-egg {
       position: absolute;
-      width: 150px; height: 150px;
+      width: 220px; height: 220px;
       image-rendering: pixelated; object-fit: contain;
       filter: drop-shadow(0 0 14px #f5c51866);
-      bottom: 100px; left: 50%; transform: translateX(-50%);
+      bottom: 80px; left: 50%; transform: translateX(-50%);
       display: none;
       transition: transform 0.08s ease;
     }
@@ -182,7 +182,7 @@
   <div id="shop-items">
 
     <div class="shop-item" id="item-golden-carrot" onclick="buyItem('golden-carrot')">
-      <img class="item-icon" src="Golden_Carrot_JE4_BE2.png" alt="Altın Havuç" />
+      <img class="item-icon" src="golden_carrot.png" alt="Altın Havuç" />
       <div class="shop-item-info">
         <span class="item-name">Altın Havuç</span>
         <span class="item-desc">Tıklama +1 · sağda</span>
@@ -234,7 +234,7 @@
 <div id="right-panel">
   <img class="side-upgrade" id="upgrade-bread"  src="golden_bread.png"          alt="Altın Ekmek"   draggable="false" />
   <img id="potato-img"                           src="potato.png"                alt="potato"        draggable="false" />
-  <img class="side-upgrade" id="upgrade-carrot"  src="Golden_Carrot_JE4_BE2.png" alt="Altın Havuç"   draggable="false" />
+  <img class="side-upgrade" id="upgrade-carrot"  src="golden_carrot.png" alt="Altın Havuç"   draggable="false" />
   <img id="upgrade-egg"                          src="goldenegg2.png"            alt="Altın Yumurta" draggable="false" />
   <img class="animal-icon"  id="animal-chicken"  src="chicken.png"               alt="Tavuk" />
   <img class="animal-icon"  id="animal-pig"      src="pig.png"                   alt="Domuz" />
