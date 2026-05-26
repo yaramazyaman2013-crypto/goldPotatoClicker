@@ -21,8 +21,8 @@
 
     /* ── LEFT PANEL ── */
     #left-panel {
-      width: 320px;
-      min-width: 260px;
+      width: 340px;
+      min-width: 280px;
       background: #111100;
       border-right: 3px solid #f5c518;
       display: flex;
@@ -32,28 +32,15 @@
     }
 
     #currency-bar { display: flex; align-items: center; gap: 10px; }
-
-    #currency-icon {
-      width: 36px; height: 36px;
-      image-rendering: pixelated; object-fit: contain;
-    }
-
-    #currency-count {
-      font-size: 22px; color: #f5c518;
-      text-shadow: 0 0 8px #f5c51888;
-    }
+    #currency-icon { width: 36px; height: 36px; image-rendering: pixelated; object-fit: contain; }
+    #currency-count { font-size: 22px; color: #f5c518; text-shadow: 0 0 8px #f5c51888; }
 
     #shop-title {
-      font-size: 13px; color: #f5c518;
-      letter-spacing: 3px;
-      border-bottom: 2px solid #f5c51855;
-      padding-bottom: 8px;
+      font-size: 13px; color: #f5c518; letter-spacing: 3px;
+      border-bottom: 2px solid #f5c51855; padding-bottom: 8px;
     }
 
-    #shop-items {
-      display: flex; flex-direction: column;
-      gap: 10px; overflow-y: auto; flex: 1;
-    }
+    #shop-items { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; flex: 1; }
     #shop-items::-webkit-scrollbar { width: 4px; }
     #shop-items::-webkit-scrollbar-track { background: #111100; }
     #shop-items::-webkit-scrollbar-thumb { background: #f5c51855; border-radius: 2px; }
@@ -62,23 +49,28 @@
       background: #1a1800; border: 2px solid #f5c51833;
       border-radius: 4px; padding: 10px 12px;
       display: flex; align-items: center; gap: 10px;
-      cursor: pointer;
-      transition: border-color .15s, background .15s;
+      cursor: pointer; transition: border-color .15s, background .15s;
     }
     .shop-item:hover { border-color: #f5c518aa; background: #221f00; }
     .shop-item.purchased { border-color: #f5c518; background: #2a2200; cursor: default; }
     .shop-item.purchased:hover { border-color: #f5c518; background: #2a2200; }
 
     .shop-item .item-icon {
-      width: 32px; height: 32px;
+      width: 34px; height: 34px;
       image-rendering: pixelated; object-fit: contain; flex-shrink: 0;
     }
-    .shop-item-info { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-    .item-name  { font-size: 8px; color: #f5c518cc; }
-    .item-desc  { font-size: 6px; color: #f5c51666; }
+
+    .shop-item-info {
+      flex: 1; min-width: 0;
+      display: flex; flex-direction: column; gap: 7px;
+    }
+    .item-name  { font-size: 8px; color: #f5c518cc; white-space: nowrap; }
+    .item-desc  { font-size: 6px; color: #f5c51666; line-height: 1.6; }
+
     .item-price {
       display: flex; align-items: center; gap: 4px;
-      font-size: 8px; color: #f5c51888; white-space: nowrap; flex-shrink: 0;
+      font-size: 8px; color: #f5c51888;
+      white-space: nowrap; flex-shrink: 0;
     }
     .item-price img { width: 14px; height: 14px; image-rendering: pixelated; object-fit: contain; }
     .item-price.cant-afford { opacity: 0.4; }
@@ -88,8 +80,7 @@
     #right-panel {
       flex: 1; display: flex;
       align-items: center; justify-content: center;
-      position: relative; overflow: hidden;
-      cursor: pointer;
+      position: relative; overflow: hidden; cursor: pointer;
       background: radial-gradient(ellipse at center, #1a1500 0%, #0a0a00 70%);
       user-select: none;
     }
@@ -100,84 +91,82 @@
       pointer-events: none;
     }
 
-    /* potato */
+    /* ── CLICKABLE ITEMS (potato, carrot, bread, egg) ── */
+    /* All use JS .clicking class for scale animation — no :active override */
     #potato-img {
       width: 220px; height: 220px;
-      image-rendering: pixelated;
-      transition: transform 0.08s;
+      image-rendering: pixelated; object-fit: contain;
       filter: drop-shadow(0 0 28px #f5c51866);
       position: relative; z-index: 2;
+      transition: transform 0.08s ease;
     }
-    #right-panel:active #potato-img,
-    #right-panel:active .side-upgrade { transform: scale(0.91); }
+    #potato-img.clicking { transform: scale(0.91); }
 
-    /* side upgrades (bread left, carrot right) — same size as potato */
+    /* side upgrades — vertically centered, close to potato */
     .side-upgrade {
       position: absolute;
-      width: 220px; height: 220px;
+      width: 200px; height: 200px;
       image-rendering: pixelated; object-fit: contain;
       filter: drop-shadow(0 0 14px #f5c51866);
-      transition: transform 0.08s;
-      display: none;
       top: 50%; transform: translateY(-50%);
+      display: none;
+      transition: transform 0.08s ease;
     }
-    #upgrade-bread  { left: 16px; }
-    #upgrade-carrot { right: 16px; }
+    .side-upgrade.clicking { transform: translateY(-50%) scale(0.91); }
+
+    /* 50px gap from potato edges */
+    #upgrade-bread  { right: calc(50% + 160px); }
+    #upgrade-carrot { left:  calc(50% + 160px); }
 
     /* egg — bottom center */
     #upgrade-egg {
       position: absolute;
-      width: 160px; height: 160px;
+      width: 150px; height: 150px;
       image-rendering: pixelated; object-fit: contain;
       filter: drop-shadow(0 0 14px #f5c51866);
-      transition: transform 0.08s;
+      bottom: 100px; left: 50%; transform: translateX(-50%);
       display: none;
-      bottom: 16px; left: 50%; transform: translateX(-50%);
+      transition: transform 0.08s ease;
     }
-    #right-panel:active #upgrade-egg { transform: translateX(-50%) scale(0.91); }
+    #upgrade-egg.clicking { transform: translateX(-50%) scale(0.91); }
 
-    /* passive animals — bottom corners */
+    /* ── ANIMALS — bottom left side by side ── */
     .animal-icon {
-      position: absolute;
-      width: 80px; height: 80px;
+      position: absolute; bottom: 16px;
+      width: 70px; height: 70px;
       image-rendering: pixelated; object-fit: contain;
       filter: drop-shadow(0 0 8px #f5c51844);
-      display: none; bottom: 16px;
-      pointer-events: none;
-      transition: transform 0.12s;
+      display: none; pointer-events: none;
+      transition: transform 0.12s ease;
     }
     #animal-chicken { left: 16px; }
-    #animal-pig     { right: 16px; }
+    #animal-pig     { left: 96px; }
 
-    /* passive notification */
+    .animal-icon.bounce { transform: translateY(-12px); }
+
+    /* ── PASSIVE NOTIF ── */
     #passive-notif {
-      position: fixed; bottom: 24px; left: 50%;
-      transform: translateX(-50%);
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
       background: #1a1800; border: 2px solid #f5c518;
-      color: #f5c518; font-size: 9px;
-      padding: 8px 14px; border-radius: 6px;
+      color: #f5c518; font-size: 8px;
+      padding: 8px 16px; border-radius: 6px;
       opacity: 0; pointer-events: none;
-      transition: opacity 0.4s;
-      z-index: 99;
-    }
-
-    /* float labels */
-    .float-label {
-      position: absolute; display: flex; align-items: center; gap: 5px;
-      font-size: 12px; color: #f5c518;
-      text-shadow: 0 0 6px #f5c518bb;
-      pointer-events: none;
-      animation: floatUp var(--dur, 1.1s) ease-out forwards;
+      transition: opacity 0.4s; z-index: 99;
       white-space: nowrap;
     }
-    .float-label img {
-      width: 18px; height: 18px;
-      image-rendering: pixelated; object-fit: contain;
+
+    /* ── FLOAT LABELS ── */
+    .float-label {
+      position: absolute; display: flex; align-items: center; gap: 5px;
+      font-size: 12px; color: #f5c518; text-shadow: 0 0 6px #f5c518bb;
+      pointer-events: none;
+      animation: floatUp var(--dur,1.1s) ease-out forwards;
+      white-space: nowrap;
     }
+    .float-label img { width: 18px; height: 18px; image-rendering: pixelated; object-fit: contain; }
     @keyframes floatUp {
-      0%   { opacity:1; transform: translateY(0) translateX(var(--dx,0px)) scale(1); }
-      15%  { transform: translateY(calc(var(--rise,-110px)*.1)) translateX(calc(var(--dx,0px)*.3)) scale(1.15); }
-      100% { opacity:0; transform: translateY(var(--rise,-110px)) translateX(var(--dx,0px)) scale(0.8); }
+      0%   { opacity:1; transform:translateY(0) translateX(var(--dx,0px)); }
+      100% { opacity:0; transform:translateY(var(--rise,-110px)) translateX(var(--dx,0px)); }
     }
   </style>
 </head>
@@ -196,7 +185,7 @@
       <img class="item-icon" src="Golden_Carrot_JE4_BE2.png" alt="Altın Havuç" />
       <div class="shop-item-info">
         <span class="item-name">Altın Havuç</span>
-        <span class="item-desc">Tıklama +1 (sağda)</span>
+        <span class="item-desc">Tıklama +1 · sağda</span>
       </div>
       <span class="item-price" id="price-golden-carrot">500 <img src="potato.png" alt="" /></span>
     </div>
@@ -205,36 +194,37 @@
       <img class="item-icon" src="golden_bread.png" alt="Altın Ekmek" />
       <div class="shop-item-info">
         <span class="item-name">Altın Ekmek</span>
-        <span class="item-desc">Tıklama +1 (solda)</span>
+        <span class="item-desc">Tıklama +1 · solda</span>
       </div>
       <span class="item-price" id="price-golden-bread">500 <img src="potato.png" alt="" /></span>
     </div>
 
     <div class="shop-item" id="item-golden-egg" onclick="buyItem('golden-egg')">
-      <img class="item-icon" src="golden_egg.png" alt="Altın Yumurta" />
+      <img class="item-icon" src="goldenegg2.png" alt="Altın Yumurta" />
       <div class="shop-item-info">
         <span class="item-name">Altın Yumurta</span>
         <span class="item-desc">Tıklamayı 2x katlar</span>
       </div>
-      <span class="item-price" id="price-golden-egg">5000 <img src="potato.png" alt="" /></span>
+      <span class="item-price" id="price-golden-egg">1000 <img src="potato.png" alt="" /></span>
     </div>
 
     <div class="shop-item" id="item-chicken" onclick="buyItem('chicken')">
       <img class="item-icon" src="chicken.png" alt="Tavuk" />
       <div class="shop-item-info">
         <span class="item-name">Tavuk</span>
-        <span class="item-desc">5dk'da +1000 patates</span>
+        <span class="item-desc">1dk'da +1000 patates</span>
       </div>
-      <span class="item-price" id="price-chicken">6000 <img src="potato.png" alt="" /></span>
+      <span class="item-price" id="price-chicken">5000 <img src="potato.png" alt="" /></span>
     </div>
 
     <div class="shop-item" id="item-pig" onclick="buyItem('pig')">
       <img class="item-icon" src="pig.png" alt="Domuz" />
       <div class="shop-item-info">
         <span class="item-name">Domuz</span>
-        <span class="item-desc">3sn'de 1 otomatik tık, 5dk'da -500</span>
+        <span class="item-desc">1.5sn'de otomatik tık
+5dk'da 50 patates yer</span>
       </div>
-      <span class="item-price" id="price-pig">7000 <img src="potato.png" alt="" /></span>
+      <span class="item-price" id="price-pig">5000 <img src="potato.png" alt="" /></span>
     </div>
 
   </div>
@@ -242,12 +232,12 @@
 
 <!-- RIGHT -->
 <div id="right-panel">
-  <img class="side-upgrade" id="upgrade-bread"  src="golden_bread.png"        alt="Altın Ekmek"   draggable="false" />
-  <img id="potato-img"                           src="potato.png"              alt="potato"        draggable="false" />
-  <img class="side-upgrade" id="upgrade-carrot"  src="Golden_Carrot_JE4_BE2.png" alt="Altın Havuç" draggable="false" />
-  <img id="upgrade-egg"                          src="golden_egg.png"          alt="Altın Yumurta" draggable="false" />
-  <img class="animal-icon"  id="animal-chicken"  src="chicken.png"             alt="Tavuk" />
-  <img class="animal-icon"  id="animal-pig"      src="pig.png"                 alt="Domuz" />
+  <img class="side-upgrade" id="upgrade-bread"  src="golden_bread.png"          alt="Altın Ekmek"   draggable="false" />
+  <img id="potato-img"                           src="potato.png"                alt="potato"        draggable="false" />
+  <img class="side-upgrade" id="upgrade-carrot"  src="Golden_Carrot_JE4_BE2.png" alt="Altın Havuç"   draggable="false" />
+  <img id="upgrade-egg"                          src="goldenegg2.png"            alt="Altın Yumurta" draggable="false" />
+  <img class="animal-icon"  id="animal-chicken"  src="chicken.png"               alt="Tavuk" />
+  <img class="animal-icon"  id="animal-pig"      src="pig.png"                   alt="Domuz" />
 </div>
 
 <div id="passive-notif"></div>
@@ -269,6 +259,23 @@
     return v;
   }
 
+  // ── Click animation via JS class (no :active jitter) ──────────────────────
+  const clickables = [
+    document.getElementById('potato-img'),
+    document.getElementById('upgrade-bread'),
+    document.getElementById('upgrade-carrot'),
+    document.getElementById('upgrade-egg'),
+  ];
+
+  panel.addEventListener('mousedown', () => {
+    clickables.forEach(el => { if (el.style.display !== 'none') el.classList.add('clicking'); });
+  });
+  panel.addEventListener('mouseup',    stopClick);
+  panel.addEventListener('mouseleave', stopClick);
+  function stopClick() {
+    clickables.forEach(el => el.classList.remove('clicking'));
+  }
+
   panel.addEventListener('click', (e) => {
     const val = getClickValue();
     count += val;
@@ -277,54 +284,54 @@
     updateShopPrices();
   });
 
+  // ── Shop items ─────────────────────────────────────────────────────────────
   const ITEMS = {
-    'golden-carrot': {
-      price: 500,
+    'golden-carrot': { price: 500,
+      onBuy() { hasCarrot = true; show('upgrade-carrot'); }
+    },
+    'golden-bread':  { price: 500,
+      onBuy() { hasBread = true; show('upgrade-bread'); }
+    },
+    'golden-egg':    { price: 1000,
+      onBuy() { hasEgg = true; show('upgrade-egg'); }
+    },
+    'chicken': { price: 5000,
       onBuy() {
-        hasCarrot = true;
-        document.getElementById('upgrade-carrot').style.display = 'block';
+        hasChicken = true; show('animal-chicken');
+        // 1 minute interval — produce 1000 + bounce
+        setInterval(() => {
+          count += 1000;
+          countEl.textContent = count;
+          updateShopPrices();
+          showNotif('🐔 Tavuk yumurta yumurtladı: +1000');
+          bounce('animal-chicken');
+        }, 60 * 1000);
       }
     },
-    'golden-bread': {
-      price: 500,
+    'pig': { price: 5000,
       onBuy() {
-        hasBread = true;
-        document.getElementById('upgrade-bread').style.display = 'block';
-      }
-    },
-    'golden-egg': {
-      price: 5000,
-      onBuy() {
-        hasEgg = true;
-        document.getElementById('upgrade-egg').style.display = 'block';
-      }
-    },
-    'chicken': {
-      price: 6000,
-      onBuy() {
-        hasChicken = true;
-        document.getElementById('animal-chicken').style.display = 'block';
-      }
-    },
-    'pig': {
-      price: 7000,
-      onBuy() {
-        hasPig = true;
-        document.getElementById('animal-pig').style.display = 'block';
-        // auto-click every 3 seconds
+        hasPig = true; show('animal-pig');
+        // auto-click every 1.5s
         setInterval(() => {
           const val = getClickValue();
           count += val;
           countEl.textContent = count;
           updateShopPrices();
-          // animate pig icon
-          const pigEl = document.getElementById('animal-pig');
-          pigEl.style.transform = 'scale(0.85)';
-          setTimeout(() => pigEl.style.transform = '', 120);
-        }, 3000);
+          bounce('animal-pig');
+        }, 1500);
       }
-    }
+    },
   };
+
+  // 5-minute tick: pig eats 50
+  setInterval(() => {
+    if (!hasPig) return;
+    count = Math.max(0, count - 50);
+    countEl.textContent = count;
+    updateShopPrices();
+    showNotif('🐷 Domuz 50 patates yedi: -50');
+    bounce('animal-pig');
+  }, 5 * 60 * 1000);
 
   function buyItem(id) {
     const item = ITEMS[id];
@@ -334,9 +341,8 @@
     item.bought = true;
     countEl.textContent = count;
     item.onBuy();
-    const el = document.getElementById('item-' + id);
-    el.classList.add('purchased');
-    el.onclick = null;
+    document.getElementById('item-' + id).classList.add('purchased');
+    document.getElementById('item-' + id).onclick = null;
     document.getElementById('price-' + id).innerHTML = '✔ Alındı';
     updateShopPrices();
   }
@@ -349,22 +355,13 @@
     }
   }
 
-  // ── Passive tick every 5 minutes ─────────────────────────────────────────
-  setInterval(() => {
-    let delta = 0;
-    if (hasChicken) delta += 1000;
-    if (hasPig)     delta -= 500;
-    if (delta === 0) return;
+  function show(id) { document.getElementById(id).style.display = 'block'; }
 
-    count = Math.max(0, count + delta);
-    countEl.textContent = count;
-    updateShopPrices();
-
-    const parts = [];
-    if (hasChicken) parts.push('Tavuk: +1000');
-    if (hasPig)     parts.push('Domuz: -500');
-    showNotif(parts.join('  |  '));
-  }, 5 * 60 * 1000);
+  function bounce(id) {
+    const el = document.getElementById(id);
+    el.classList.add('bounce');
+    setTimeout(() => el.classList.remove('bounce'), 300);
+  }
 
   function showNotif(msg) {
     notif.textContent = msg;
@@ -373,7 +370,7 @@
     notif._t = setTimeout(() => notif.style.opacity = '0', 3000);
   }
 
-  // ── Float label ───────────────────────────────────────────────────────────
+  // ── Float label ────────────────────────────────────────────────────────────
   function spawnFloat(e, val) {
     const rect  = panel.getBoundingClientRect();
     const label = document.createElement('div');
@@ -383,17 +380,15 @@
     img.src = 'potato.png';
     const txt = document.createElement('span');
     txt.textContent = '+' + val;
-
     label.appendChild(img);
     label.appendChild(txt);
 
     const dx   = (Math.random() * 80 - 40).toFixed(0) + 'px';
     const rise = -(Math.random() * 100 + 80).toFixed(0) + 'px';
     const dur  = (Math.random() * 0.55 + 0.85).toFixed(2) + 's';
-
-    label.style.setProperty('--dx',   dx);
+    label.style.setProperty('--dx', dx);
     label.style.setProperty('--rise', rise);
-    label.style.setProperty('--dur',  dur);
+    label.style.setProperty('--dur', dur);
 
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
